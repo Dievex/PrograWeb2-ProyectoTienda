@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="globeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ade80;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Globe Circle Background -->
+  <circle cx="50" cy="50" r="45" fill="url(#globeGradient)" stroke="white" stroke-width="2"/>
+  
+  <!-- Meridians (Vertical Lines) -->
+  <ellipse cx="50" cy="50" rx="22" ry="45" fill="none" stroke="white" stroke-width="3"/>
+  <line x1="50" y1="5" x2="50" y2="95" stroke="white" stroke-width="3"/>
+  
+  <!-- Parallels (Horizontal Lines) -->
+  <path d="M12 30 Q50 40 88 30" fill="none" stroke="white" stroke-width="3"/>
+  <path d="M12 70 Q50 60 88 70" fill="none" stroke="white" stroke-width="3"/>
+  <line x1="5" y1="50" x2="95" y2="50" stroke="white" stroke-width="3"/>
+</svg>
