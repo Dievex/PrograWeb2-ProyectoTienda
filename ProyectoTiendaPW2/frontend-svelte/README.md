@@ -1,47 +1,114 @@
-# Svelte + TS + Vite
+# Tienda Online - Frontend Svelte 5
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+Este es el frontend de la aplicación de Tienda Online, desarrollado con **Svelte 5** (utilizando las nuevas **Runas**) y Vite.
 
-## Recommended IDE Setup
+## Requisitos
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+- **Node.js** (LTS recomendado, v18 o superior)
+- **NPM** o **PNPM**
+- Backend en ejecución (ver configuración en el archivo `.env`)
 
-## Need an official Svelte framework?
+## Instalación y Ejecución
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+1. Instalar las dependencias del proyecto:
+   ```bash
+   npm install
+   ```
+2. Configurar las variables de entorno (si aplica):
+   Asegúrate de que la URL del backend apunte correctamente. Por defecto, en `src/services/api.ts` está configurado como `http://localhost:3000/api`.
+3. Levantar el servidor de desarrollo:
+   ```bash
+   npm run dev
+   ```
+   La aplicación estará disponible en `http://localhost:5173`.
+4. Construcción para producción:
+   ```bash
+   npm run build
+   npm run preview
+   ```
 
-## Technical considerations
+***
 
-**Why use this over SvelteKit?**
+## Runas de Svelte 5 Utilizadas
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+El proyecto aprovecha las nuevas funcionalidades de reactividad de Svelte 5, utilizando runas (`$state`, `$derived`, `$effect`, `$props`) en lugar del antiguo sistema de reactividad basado en asignaciones (`let`, `$:`) y exportaciones (`export let`).
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+A continuación se detalla el uso de runas por componente y archivo:
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+### Componentes y Páginas (`/src/pages` y `/src/components`)
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+- **`src/App.svelte`**
+  - `$derived`: Calcula la página actual (`CurrentPage`) de manera reactiva según el estado de autenticación y la ruta actual del enrutador.
+  - `$effect`: Efecto secundario que escucha cambios de ruta y autenticación para redirigir automáticamente (ej. enviar a `/login` si no está autenticado).
+- **`src/components/Navbar.svelte`**
+  - `$state`: Maneja el estado local del menú móvil (`isMobileMenuOpen`).
+  - `$derived.by`: Genera reactivamente los ítems de navegación según el rol del usuario (ej. muestra el link "Admin" solo si el usuario es administrador).
+- **`src/components/ProductForm.svelte`**
+  - `$props`: Recibe las propiedades tipadas desde el componente padre (`product`, `onsubmit`, `oncancel`).
+  - `$state`: Maneja el estado local del formulario, como `currentProduct` e `imageFile`.
+  - `$effect`: Sincroniza `currentProduct` cada vez que cambia la propiedad `product` recibida.
+- **`src/components/ProductCard.svelte`** **y** **`src/components/UserRow.svelte`**
+  - `$props`: Acceso tipado a las propiedades (`product`, `user` y funciones de callback como `onedit`, `ondelete`, `onToggleRole`).
+  - `$state` (en ProductCard): Controla el estado local para expandir o contraer descripciones largas (`showFullDescription`).
+- **Páginas de Formulario (`src/pages/Login.svelte`,** **`src/pages/Register.svelte`)**
+  - `$state`: Controla el estado local de los campos del formulario (`username`, `password`, `confirmPassword`) y el estado de carga (`loading`).
+- **Páginas de Listado (`src/pages/Admin.svelte`,** **`src/pages/Products.svelte`)**
+  - `$state`: Almacena el listado de elementos (`users`, `searchQuery`, `isModalOpen`), y controla la interfaz de carga (`loading`).
+  - `$derived` (en Products): Filtra reactivamente la lista de productos (`filteredProducts`) en base al término de búsqueda (`searchQuery`).
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+### Tiendas (Stores Reactivas en `/src/stores`)
 
-**Why include `.vscode/extensions.json`?**
+Svelte 5 permite usar runas fuera de los archivos `.svelte` utilizando archivos `.svelte.ts`.
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+- **`auth.svelte.ts`**
+  - `$state`: Maneja el `token` y la información del `user`.
+  - `$effect.root` / `$effect`: Escucha los cambios en el token para sincronizarlo automáticamente con el `localStorage`.
+- **`cart.svelte.ts`**
+  - `$state`: Gestiona los `items` del carrito, si está abierto (`isOpen`) y si está cargando (`loading`).
+  - `$derived`: Calcula el total de ítems (`totalItems`) y el precio total (`totalPrice`).
+  - `$effect.root` / `$effect`: Guarda reactivamente el estado del carrito en `localStorage`.
+- **`router.svelte.ts`**
+  - `$state`: Almacena la ruta actual (`currentPath`).
+  - `$effect.root`: Se suscribe a los eventos `hashchange` del navegador para mantener la ruta sincronizada.
+- **`products.svelte.ts`** **y** **`toasts.svelte.ts`**
+  - `$state`: Manejan el array global de productos y las notificaciones emergentes (toasts).
 
-**Why enable `allowJs` in the TS template?**
+***
 
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
+## Backend y Seguridad (Endpoints Utilizados)
 
-**Why is HMR not preserving my local component state?**
+El frontend se comunica con una API REST (Backend). La seguridad está implementada mediante **Bearer JWT** (JSON Web Tokens), los cuales se envían en la cabecera `Authorization` de cada petición privada.
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+### Endpoints Principales
 
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+#### 1. Autenticación (`/authRoutes.js`)
 
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
-```
+- `POST /api/login` — **Público**. Inicia sesión y devuelve un token JWT.
+- `POST /api/register` — **Público**. Registra un nuevo usuario en el sistema.
+
+#### 2. Gestión de Usuarios (`/userRoutes.js`)
+
+- `GET /api/users` — **Admin**. Obtiene la lista de todos los usuarios registrados.
+- `PUT /api/users/:id` — **Admin**. Actualiza la información y el rol (user/admin) de un usuario.
+- `DELETE /api/users/:id` — **Admin**. Elimina a un usuario.
+
+#### 3. Gestión de Productos (`/productRoutes.js`)
+
+- `GET /api/productos` — **Público/User**. Obtiene la lista de todos los productos (soporta filtros por nombre).
+- `POST /api/productos` — **Admin**. Crea un nuevo producto (soporta subida de imágenes con `multipart/form-data`).
+- `PUT /api/productos/:id` — **Admin**. Modifica un producto existente.
+- `DELETE /api/productos/:id` — **Admin**. Elimina un producto.
+
+#### 4. Carrito de Compras (`/cartRoutes.js`)
+
+- `GET /api/cart` — **User**. Obtiene el carrito del usuario autenticado.
+- `POST /api/cart/add` — **User**. Añade un producto al carrito.
+- `DELETE /api/cart/:productId` — **User**. Elimina un producto específico del carrito.
+- `POST /api/cart/checkout` — **User**. Finaliza la compra y vacía el carrito.
+
+### Roles y Permisos en la Aplicación
+
+- **Invitado**: Puede ver la lista de productos e iniciar sesión/registrarse.
+- **Usuario (`user`)**: Puede añadir productos a su carrito, visualizar su carrito y hacer checkout.
+- **Administrador (`admin`)**: Además de lo anterior, tiene acceso a la vista de "Admin" y a la gestión completa (CRUD) de Productos y Usuarios.
+
