@@ -6,6 +6,7 @@ Este repositorio contiene el código fuente para el proyecto de la asignatura Pr
 - **Node.js** (LTS recomendado, v18 o superior)
 - **NPM** o **PNPM**
 - **MongoDB** (si se ejecuta localmente, o usar MongoDB Atlas según el `.env` del backend)
+- **Redis** (Debe estar instalado y en ejecución localmente en el puerto 6379, o configurado mediante la variable `REDIS_URL` en el `.env`)
 
 ---
 

@@ -3,10 +3,10 @@
 Este es el frontend de la aplicación de Tienda Online, desarrollado con **Svelte 5** (utilizando las nuevas **Runas**) y Vite.
 
 ## Requisitos
-
 - **Node.js** (LTS recomendado, v18 o superior)
 - **NPM** o **PNPM**
 - Backend en ejecución (ver configuración en el archivo `.env`)
+- **Redis** (Requerido por el backend, debe estar instalado y en ejecución)
 
 ## Instalación y Ejecución
 
