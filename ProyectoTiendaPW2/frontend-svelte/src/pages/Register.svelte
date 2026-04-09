@@ -1,6 +1,6 @@
 <script lang="ts">
   import { router } from '../stores/router.svelte';
-  import { apiFetch } from '../services/api';
+  import { AuthService } from '../services/auth.service';
   import { toasts } from '../stores/toasts.svelte';
   import { Monitor, Loader2 } from 'lucide-svelte';
 
@@ -24,10 +24,7 @@
 
     loading = true;
     try {
-      await apiFetch('/register', {
-        method: 'POST',
-        body: JSON.stringify({ username, password })
-      });
+      await AuthService.register({ username, password });
       
       toasts.success('¡Registro exitoso! Por favor inicia sesión.');
       router.navigate('/login');

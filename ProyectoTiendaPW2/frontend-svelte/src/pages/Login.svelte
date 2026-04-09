@@ -1,7 +1,7 @@
 <script lang="ts">
   import { auth } from '../stores/auth.svelte';
   import { router } from '../stores/router.svelte';
-  import { apiFetch } from '../services/api';
+  import { AuthService } from '../services/auth.service';
   import { toasts } from '../stores/toasts.svelte';
   import { Monitor, Loader2 } from 'lucide-svelte';
 
@@ -18,12 +18,7 @@
 
     loading = true;
     try {
-      const data = await apiFetch('/login', {
-        method: 'POST',
-        body: JSON.stringify({ username, password })
-      });
-
-      auth.token = data.token;
+      await AuthService.login({ username, password });
       
       toasts.success('¡Bienvenido!');
       router.navigate('/');

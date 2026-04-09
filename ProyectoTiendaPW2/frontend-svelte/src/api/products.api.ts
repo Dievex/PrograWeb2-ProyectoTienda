@@ -1,15 +1,5 @@
-import { apiFetch } from './api';
-
-export interface Product {
-  _id: string;
-  nombre: string;
-  descripcion?: string;
-  precio: number;
-  stock?: number;
-  activo?: boolean;
-  categoria?: string;
-  imagen?: string;
-}
+import { apiFetch } from './client';
+import type { Product } from '../models/product.model';
 
 export const productsApi = {
   async getAll(): Promise<Product[]> {

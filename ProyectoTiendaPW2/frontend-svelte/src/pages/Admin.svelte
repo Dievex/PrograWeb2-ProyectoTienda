@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { apiFetch } from '../services/api';
+  import { AuthService } from '../services/auth.service';
   import { toasts } from '../stores/toasts.svelte';
   import UserRow from '../components/UserRow.svelte';
   import { Loader2 } from 'lucide-svelte';
@@ -10,7 +10,7 @@
 
   async function loadUsers() {
     try {
-      users = await apiFetch('/users');
+      users = await AuthService.getUsers();
     } catch (err: any) {
       toasts.error(err.message || 'Error al cargar usuarios');
     } finally {
@@ -25,10 +25,7 @@
   async function toggleRole(user: any) {
     const newRole = user.role === 'admin' ? 'usuario' : 'admin';
     try {
-      await apiFetch(`/users/${user._id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ ...user, role: newRole })
-      });
+      await AuthService.updateUserRole(user._id, newRole);
       users = users.map(u => u._id === user._id ? { ...u, role: newRole } : u);
       toasts.success('Rol actualizado');
     } catch (err: any) {
@@ -39,7 +36,7 @@
   async function deleteUser(id: string) {
     if (!confirm('¿Seguro que quieres eliminar este usuario?')) return;
     try {
-      await apiFetch(`/users/${id}`, { method: 'DELETE' });
+      await AuthService.deleteUser(id);
       users = users.filter(u => u._id !== id);
       toasts.success('Usuario eliminado');
     } catch (err: any) {

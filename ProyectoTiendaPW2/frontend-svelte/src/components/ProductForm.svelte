@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Product } from '../services/products';
+  import type { Product } from '../models/product.model';
   import { Loader2 } from 'lucide-svelte';
 
   let { 

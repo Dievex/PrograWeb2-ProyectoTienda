@@ -1,6 +1,6 @@
-import { apiFetch } from '../services/api';
+import { ProductService } from '../services/product.service';
 import { toasts } from './toasts.svelte';
-import type { Product } from '../services/products';
+import type { Product } from '../models/product.model';
 
 export function createProductsStore() {
   let products = $state<Product[]>([]);
@@ -9,7 +9,7 @@ export function createProductsStore() {
   async function loadProducts() {
     loading = true;
     try {
-      products = await apiFetch('/productos');
+      products = await ProductService.getAllProducts();
     } catch (err: any) {
       toasts.error(err.message || 'Error al cargar productos');
     } finally {

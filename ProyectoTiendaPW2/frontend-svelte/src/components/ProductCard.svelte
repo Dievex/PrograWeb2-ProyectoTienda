@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Product } from '../services/products';
+  import type { Product } from '../models/product.model';
   import { Edit, Trash2, Tag, ShoppingCart, ChevronDown, ChevronUp } from 'lucide-svelte';
   import { auth } from '../stores/auth.svelte';
   import { cart } from '../stores/cart.svelte';

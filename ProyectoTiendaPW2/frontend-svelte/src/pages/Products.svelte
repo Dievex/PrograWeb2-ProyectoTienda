@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { productsApi, type Product } from '../services/products';
+  import { ProductService } from '../services/product.service';
+  import type { Product } from '../models/product.model';
   import ProductCard from '../components/ProductCard.svelte';
   import ProductForm from '../components/ProductForm.svelte';
   import { auth } from '../stores/auth.svelte';
@@ -43,7 +44,7 @@
     if (!confirm('¿Estás seguro de que quieres borrar este producto?')) return;
     
     try {
-      await productsApi.delete(id);
+      await ProductService.deleteProduct(id);
       toasts.success('Producto borrado');
       productsStore.removeProduct(id);
     } catch (err: any) {
@@ -56,11 +57,11 @@
     
     try {
       if (currentProduct._id) {
-        const updated = await productsApi.update(currentProduct._id, formData);
+        const updated = await ProductService.updateProduct(currentProduct._id, formData);
         productsStore.updateProduct(updated);
         toasts.success('Producto actualizado');
       } else {
-        const created = await productsApi.create(formData);
+        const created = await ProductService.createProduct(formData);
         productsStore.addProduct(created);
         toasts.success('Producto creado');
       }

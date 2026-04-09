@@ -1,4 +1,5 @@
-import { cartApi, type CartItem } from '../services/cart';
+import { CartService } from '../services/cart.service';
+import type { CartItem } from '../models/cart.model';
 import { auth } from './auth.svelte';
 import { toasts } from './toasts.svelte';
 import { productsStore } from './products.svelte'; // Import products store
@@ -22,7 +23,7 @@ export function createCartStore() {
   async function loadCart() {
     loading = true;
     try {
-      items = await cartApi.getCart();
+      items = await CartService.getCart();
     } catch (err) {
       console.error('Error loading cart:', err);
     } finally {
@@ -58,7 +59,7 @@ export function createCartStore() {
       
       try {
         // Optimistic update (optional, but let's wait for server response for accuracy)
-        items = await cartApi.addToCart(productId);
+        items = await CartService.addToCart(productId);
         toasts.success('Producto añadido al carrito');
       } catch (err: any) {
         toasts.error(err.message || 'Error al añadir al carrito');
@@ -67,7 +68,7 @@ export function createCartStore() {
 
     async removeItem(productId: string) {
       try {
-        items = await cartApi.removeFromCart(productId);
+        items = await CartService.removeFromCart(productId);
         toasts.success('Producto eliminado del carrito');
       } catch (err: any) {
         toasts.error(err.message || 'Error al eliminar del carrito');
@@ -76,7 +77,7 @@ export function createCartStore() {
     
     async checkout() {
       try {
-        await cartApi.checkout();
+        await CartService.checkout();
         
         // Update local products stock
         // We need to decrease stock for each item in the cart

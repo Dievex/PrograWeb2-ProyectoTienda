@@ -9,10 +9,28 @@ Este documento describe la implementación completa del frontend migrado a **Sve
 Se ha inicializado el proyecto utilizando **Vite** con la plantilla oficial de Svelte 5. Se ha mantenido la estructura de carpetas solicitada para organizar el código de manera modular.
 
 ### Organización de Directorios
-*   **`src/components/`**: Componentes reutilizables (`Navbar`, `ProductCard`, `ProductForm`, `UserRow`, `CartDrawer`).
-*   **`src/pages/`**: Vistas principales de la aplicación (`Login`, `Register`, `Products`, `Admin`, `Profile`).
-*   **`src/services/`**: Lógica de comunicación con la API (`api.ts`, `products.ts`, `cart.ts`).
-*   **`src/stores/`**: Gestión del estado global reactivo (`auth.svelte.ts`, `cart.svelte.ts`, `router.svelte.ts`).
+El proyecto sigue una arquitectura modular y por capas, separando claramente las responsabilidades tanto en el frontend como en el backend.
+
+#### Frontend (Svelte 5)
+La carpeta `frontend-svelte/src/` está estructurada de la siguiente manera:
+
+*   **`api/`**: Contiene la lógica de comunicación pura con el backend usando `fetch`. Aquí se definen las peticiones HTTP (`client.ts`, `auth.api.ts`, `cart.api.ts`, `products.api.ts`). Su única responsabilidad es enviar y recibir datos.
+*   **`models/`**: Define las interfaces y tipos de TypeScript (`product.model.ts`, `cart.model.ts`). Actúa como el contrato de datos que usa toda la aplicación frontend.
+*   **`mappers/`**: Contiene funciones (`product.mapper.ts`, `cart.mapper.ts`) encargadas de transformar los datos crudos que llegan del backend (DTOs) hacia los modelos estructurados del frontend. Esto aísla a la UI de posibles cambios en la estructura de la API.
+*   **`services/`**: Actúan como intermediarios u orquestadores. Los servicios (`product.service.ts`, `cart.service.ts`, `auth.service.ts`) llaman a la capa `api`, pasan la respuesta por la capa `mappers` y entregan los datos limpios a los Stores o Componentes.
+*   **`stores/`**: Gestión del estado global reactivo utilizando las nuevas Runes de Svelte 5 (`auth.svelte.ts`, `cart.svelte.ts`, `products.svelte.ts`, `router.svelte.ts`). Consumen los `services` para obtener datos y los exponen a la interfaz.
+*   **`components/`**: Componentes visuales reutilizables (`Navbar`, `ProductCard`, `ProductForm`, `UserRow`, `CartDrawer`). Solo se encargan de la presentación y delegan la lógica a los Stores o reciben datos por props.
+*   **`pages/`**: Vistas principales de la aplicación (`Login`, `Register`, `Products`, `Admin`, `Profile`). Actúan como contenedores que ensamblan componentes y conectan con el estado global.
+
+#### Backend (Node.js + Express)
+La carpeta `backend/src/` sigue un patrón MVC (Modelo-Vista-Controlador) enriquecido con servicios:
+
+*   **`models/`**: Define los esquemas de Mongoose para MongoDB (`Producto.js`, `User.js`, etc.). Representan la estructura de datos en la base de datos.
+*   **`controllers/`**: Manejan las solicitudes HTTP entrantes (`req`, `res`). Extraen los parámetros, llaman a los servicios correspondientes y devuelven la respuesta HTTP adecuada (códigos de estado y JSON).
+*   **`services/`**: Contienen la lógica de negocio pura. Los controladores delegan en los servicios las operaciones complejas (ej. calcular totales, verificar stock, encriptar contraseñas) antes de interactuar con los modelos.
+*   **`routes/`**: Definen los endpoints de la API REST (ej. `GET /productos`, `POST /login`) y los asocian con sus respectivos métodos en los controladores. También aplican middlewares.
+*   **`middleware/`**: Funciones intermedias que se ejecutan antes de los controladores, como la verificación de tokens JWT (`authMiddleware.js`) o el límite de peticiones (`rateLimiter.js`).
+*   **`config/`**: Archivos de configuración para conexiones a bases de datos (`db.js`, `redis.js`) y herramientas de terceros (`swagger.js`).
 
 ---
 

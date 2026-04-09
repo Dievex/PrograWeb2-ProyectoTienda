@@ -1,11 +1,5 @@
-import { apiFetch } from './api';
-import type { Product } from './products';
-
-export interface CartItem {
-  productId: Product;
-  quantity: number;
-  _id: string;
-}
+import { apiFetch } from './client';
+import type { CartItem } from '../models/cart.model';
 
 export const cartApi = {
   async getCart(): Promise<CartItem[]> {
