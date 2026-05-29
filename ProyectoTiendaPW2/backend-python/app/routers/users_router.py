@@ -58,7 +58,6 @@ def update_user_role(
     user_service: UserService = Depends(get_user_service),
     current_user: UserModel = Depends(require_admin)
 ):
-    # El frontend de Svelte envía "usuario" en lugar de "user" al intentar quitar el rol de admin.
     new_role = "user" if role_data.rol == "usuario" else role_data.rol
     update_data = UserUpdate(role=new_role)
     return user_service.update_user(user_id, update_data)
