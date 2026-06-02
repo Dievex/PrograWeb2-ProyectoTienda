@@ -10,7 +10,7 @@ El uso de la IA en este proyecto ha sido para implementar de manera estructurada
 
 **Prompt inicial:**
 
-> \[El usuario proporcionó un archivo de instrucciones completo y pidió: "Quiero ampliar el proyecto actual creando un nuevo backend en Python. Para ello te he adjuntado un archivo de "Instrucciones" que debes seguir estrictamente y en su totalidad... Empieza resumiendo lo que vas a hacer y espera mi confirmación antes de generar el primer archivo."]
+> \["Quiero ampliar el proyecto actual creando un nuevo backend en Python. Para ello te he adjuntado un archivo de "Instrucciones" que debes seguir estrictamente y en su totalidad... Empieza resumiendo lo que vas a hacer y espera mi confirmación antes de generar el primer archivo."]
 
 **Problema detectado:**
 Ninguno en el entendimiento inicial, pero fue crucial identificar que se requería una estricta separación de capas (routers sin lógica, repositorios aislados para la base de datos) y que estaba prohibido usar persistencia en memoria o JSON, requiriendo en su lugar SQLite.
@@ -28,7 +28,7 @@ Se adoptó un flujo de trabajo por fases (1: BD y Modelos, 2: Schemas y Reposito
 
 **Prompt inicial:**
 
-> \[El usuario aprobó continuar a la fase 2 tras la configuración de base de datos] "avanzamos a la fase 2"
+> \"avanzamos a la fase 2"
 
 **Problema detectado:**
 Garantizar que Pydantic estuviera configurado para devolver los datos exactamente como el frontend los espera (ej. incluir el `id`, el `created_at`, y tener compatibilidad con el ORM a través de `from_attributes=True`).
